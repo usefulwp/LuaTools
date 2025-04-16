@@ -53,9 +53,11 @@ Const.SpineAnimationStateEvent = {
 
 function SkeletonGraphicWrap:__ctor(skeletonGraphic)
     self.skeletonGraphic = skeletonGraphic
+    self:SpineInitialize()
+end
 
-    self.animationState = self.skeletonGraphic.AnimationState
-
+function SkeletonGraphicWrap:GetAnimationState()
+    return self.skeletonGraphic.AnimationState
 end
 
 function SkeletonGraphicWrap:__delete()
@@ -64,9 +66,9 @@ function SkeletonGraphicWrap:__delete()
         table.clear(v)
     end
     table.clear(self.bindFunc)
-    self.bindFunc=nil
+    self.bindFunc = nil
     table.clear(self.funcIdDict)
-    self.funcIdDict=nil
+    self.funcIdDict = nil
     self.transform = nil
     self.skeletonGraphic = nil
 end
@@ -76,15 +78,15 @@ function SkeletonGraphicWrap:UnBindAllEvent()
         for eventType, eventFuncList in pairs(self.bindFunc) do
             for _, func in ipairs(eventFuncList) do
                 if eventType == Const.SpineAnimationStateEvent.Start then
-                    self.animationState.Start = self.animationState.Start -func
+                    self.skeletonGraphic.AnimationState.Start = self.skeletonGraphic.AnimationState.Start - func
                 elseif eventType == Const.SpineAnimationStateEvent.Interrupt then
-                    self.animationState.Interrupt = self.animationState.Interrupt - func
-                elseif eventType==Const.SpineAnimationStateEvent.End then
-                    self.animationState.End= self.animationState.End-func
-                elseif eventType==Const.SpineAnimationStateEvent.Dispose then
-                    self.animationState.Dispose= self.animationState.Dispose-func
-                elseif eventType==Const.SpineAnimationStateEvent.Complete then
-                    self.animationState.Complete= self.animationState.Complete-func
+                    self.skeletonGraphic.AnimationState.Interrupt = self.skeletonGraphic.AnimationState.Interrupt - func
+                elseif eventType == Const.SpineAnimationStateEvent.End then
+                    self.skeletonGraphic.AnimationState.End = self.skeletonGraphic.AnimationState.End - func
+                elseif eventType == Const.SpineAnimationStateEvent.Dispose then
+                    self.skeletonGraphic.AnimationState.Dispose = self.skeletonGraphic.AnimationState.Dispose - func
+                elseif eventType == Const.SpineAnimationStateEvent.Complete then
+                    self.skeletonGraphic.AnimationState.Complete = self.skeletonGraphic.AnimationState.Complete - func
                 end
             end
         end
@@ -159,49 +161,47 @@ function SkeletonGraphicWrap:SetSpineSkin(skinName)
     self.skeletonGraphic:UpdateMesh()
 end
 
-local funcId=0
+local funcId = 0
 
-function SkeletonGraphicWrap:BindEvent(eventType,func)
+function SkeletonGraphicWrap:BindEvent(eventType, func)
     self.bindFunc = self.bindFunc or {}
     self.bindFunc[eventType] = self.bindFunc[eventType] or {}
-    self.funcIdDict=self.funcIdDict or {}
+    self.funcIdDict = self.funcIdDict or {}
     table.insert(self.bindFunc[eventType], func)
     if eventType == Const.SpineAnimationStateEvent.Start then
-        self.animationState.Start = self.animationState.Start + func
+        self.skeletonGraphic.AnimationState.Start = self.skeletonGraphic.AnimationState.Start + func
     elseif eventType == Const.SpineAnimationStateEvent.Interrupt then
-        self.animationState.Interrupt = self.animationState.Interrupt + func
-    elseif eventType==Const.SpineAnimationStateEvent.End then
-        self.animationState.End= self.animationState.End+func
-    elseif eventType==Const.SpineAnimationStateEvent.Dispose then
-        self.animationState.Dispose= self.animationState.Dispose+func
-    elseif eventType==Const.SpineAnimationStateEvent.Complete then
-        self.animationState.Complete= self.animationState.Complete+func
-    else 
-        printerror("SkeletonGraphic 没有"..eventType.."事件可以绑定")
+        self.skeletonGraphic.AnimationState.Interrupt = self.skeletonGraphic.AnimationState.Interrupt + func
+    elseif eventType == Const.SpineAnimationStateEvent.End then
+        self.skeletonGraphic.AnimationState.End = self.skeletonGraphic.AnimationState.End + func
+    elseif eventType == Const.SpineAnimationStateEvent.Dispose then
+        self.skeletonGraphic.AnimationState.Dispose = self.skeletonGraphic.AnimationState.Dispose + func
+    elseif eventType == Const.SpineAnimationStateEvent.Complete then
+        self.skeletonGraphic.AnimationState.Complete = self.skeletonGraphic.AnimationState.Complete + func
+    else
+        printerror("SkeletonGraphic 没有" .. eventType .. "事件可以绑定")
         return
     end
-    funcId=funcId+1
-    self.funcIdDict[funcId]=func
+    funcId = funcId + 1
+    self.funcIdDict[funcId] = func
 end
 
-function SkeletonGraphicWrap:UnBindEvent(eventType,funcId)
-    local func=self.funcIdDict[funcId]
+function SkeletonGraphicWrap:UnBindEvent(eventType, funcId)
+    local func = self.funcIdDict[funcId]
     if func then
-        printerror("事件"..eventType.."没有绑定函数,无法解绑函数")
+        printerror("事件" .. eventType .. "没有绑定函数,无法解绑函数")
     end
-
     if eventType == Const.SpineAnimationStateEvent.Start then
-        self.animationState.Start = self.animationState.Start - func
+        self.skeletonGraphic.AnimationState.Start = self.skeletonGraphic.AnimationState.Start - func
     elseif eventType == Const.SpineAnimationStateEvent.Interrupt then
-        self.animationState.Interrupt = self.animationState.Interrupt - func
-    elseif eventType==Const.SpineAnimationStateEvent.End then
-        self.animationState.End= self.animationState.End-func
-    elseif eventType==Const.SpineAnimationStateEvent.Dispose then
-        self.animationState.Dispose= self.animationState.Dispose-func
-    elseif eventType==Const.SpineAnimationStateEvent.Complete then
-        self.animationState.Complete= self.animationState.Complete-func
+        self.skeletonGraphic.AnimationState.Interrupt = self.skeletonGraphic.AnimationState.Interrupt - func
+    elseif eventType == Const.SpineAnimationStateEvent.End then
+        self.skeletonGraphic.AnimationState.End = self.skeletonGraphic.AnimationState.End - func
+    elseif eventType == Const.SpineAnimationStateEvent.Dispose then
+        self.skeletonGraphic.AnimationState.Dispose = self.skeletonGraphic.AnimationState.Dispose - func
+    elseif eventType == Const.SpineAnimationStateEvent.Complete then
+        self.skeletonGraphic.AnimationState.Complete = self.skeletonGraphic.AnimationState.Complete - func
     end
 end
-
 
 return SkeletonGraphicWrap
